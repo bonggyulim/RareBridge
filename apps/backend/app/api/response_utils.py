@@ -1,10 +1,4 @@
-from typing import Any, Optional
-from pydantic import BaseModel
-
-class APIResponse(BaseModel):
-    success: bool
-    data: Optional[Any] = None
-    error: Optional[dict] = None
+from typing import Any
 
 def success_response(data: Any) -> dict:
     return {
@@ -12,7 +6,8 @@ def success_response(data: Any) -> dict:
         "data": data
     }
 
-def error_response(code: str, message: str, status_code: int = 400) -> dict:
+
+def error_response(code: str, message: str) -> dict:
     return {
         "success": False,
         "error": {
