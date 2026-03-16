@@ -1,0 +1,90 @@
+# =========================
+# OS / Editor
+# =========================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# Root env files
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Node / Frontend
+# =========================
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+coverage/
+.next/
+out/
+build/
+.vercel/
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+*.tsbuildinfo
+next-env.d.ts
+
+# =========================
+# Python / Backend
+# =========================
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.python-version
+
+# packaging
+dist/
+*.egg-info/
+.eggs/
+
+# test / cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# =========================
+# Backend env files
+# =========================
+apps/backend/.env
+apps/backend/.env.*
+!apps/backend/.env.example
+
+# =========================
+# Frontend env files
+# =========================
+apps/frontend/.env
+apps/frontend/.env.*
+!apps/frontend/.env.example
+
+# =========================
+# Data outputs
+# =========================
+data/processed/*
+!data/processed/.gitkeep
+
+# optional: raw data too if not versioning datasets
+# data/raw/*
+# !data/raw/.gitkeep
