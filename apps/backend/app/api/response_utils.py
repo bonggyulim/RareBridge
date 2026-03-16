@@ -6,7 +6,6 @@ def success_response(data: Any) -> dict:
         "data": data
     }
 
-
 def error_response(code: str, message: str) -> dict:
     return {
         "success": False,

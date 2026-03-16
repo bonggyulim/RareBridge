@@ -1,22 +1,26 @@
-# Disease Controller : 질환 검색 API endpoint를 정의하는 계층
-# 입력된 HPO 코드 목록을 Service 계층에 전달하고 검색 결과를 반환
-
 from fastapi import APIRouter
-from app.schemas.disease_schema import DiseaseSearchRequest, DiseaseSearchResponse
-from app.services.disease_service import DiseaseService
+from fastapi.responses import JSONResponse
 
-router = APIRouter(tags=["Disease"])
+from app.schemas.symptom_schema import SymptomRequest
+from app.services.hpo_service import hpo_service
+from app.api.response_utils import success_response, error_response
 
-service = DiseaseService()
+router = APIRouter(tags=["HPO"])
 
-@router.post("/diseases/search", response_model=DiseaseSearchResponse)
-def search_diseases(request: DiseaseSearchRequest):
-    results = service.search_diseases(
-        request.hpo_codes,
-        request.top_k
-    )
+@router.post("/extract")
+async def extract_hpo(request: SymptomRequest):
+    """
+    자연어 증상 텍스트에서 HPO 코드를 추출합니다.
+    """
+    if not request.text or not request.text.strip():
+        return JSONResponse(
+            status_code=400,
+            content=error_response("INVALID_INPUT", "Text field is required")
+        )
 
-    return {
-        "success": True,
-        "data": results
-    }
+    hpo_codes = await hpo_service.extract_hpo_codes(request.text)
+
+    if not hpo_codes:
+        return success_response({"hpo_codes": []})
+
+    return success_response({"hpo_codes": hpo_codes})
