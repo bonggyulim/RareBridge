@@ -1,23 +1,25 @@
 import os
 import json
 import logging
-import google.generativeai as genai
 from typing import List
-from app.schemas.hpo_schema import HpoResponse
+
+import google.generativeai as genai
 
 logger = logging.getLogger(__name__)
 
 class HpoService:
     def __init__(self):
         self.api_key = os.getenv("GEMINI_API_KEY")
+
         if not self.api_key:
             logger.error("GEMINI_API_KEY not found")
+
         genai.configure(api_key=self.api_key)
-        self.model = genai.GenerativeModel('gemini-flash-latest')
+        self.model = genai.GenerativeModel("gemini-flash-latest")
 
     async def extract_hpo_codes(self, text: str) -> List[str]:
         """
-        Extracts HPO (Human Phenotype Ontology) codes from symptom text using Gemini AI.
+        자연어 증상 텍스트에서 HPO 코드를 추출합니다.
         """
         prompt = f"""
         You are a medical informatics expert specializing in the Human Phenotype Ontology (HPO).
@@ -37,13 +39,20 @@ class HpoService:
                 prompt,
                 generation_config={"response_mime_type": "application/json"}
             )
-            
+
             logger.info(f"Raw HPO extraction response: {response.text}")
+
             hpo_codes = json.loads(response.text)
+
             if isinstance(hpo_codes, list):
-                # Filter to ensure they look like HPO codes
-                return [code for code in hpo_codes if isinstance(code, str) and code.startswith("HP:")]
+                return [
+                    code
+                    for code in hpo_codes
+                    if isinstance(code, str) and code.startswith("HP:")
+                ]
+
             return []
+
         except Exception as e:
             logger.error(f"Error extracting HPO codes: {str(e)}")
             return []
