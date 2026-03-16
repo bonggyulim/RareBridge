@@ -2,9 +2,11 @@ import os
 import json
 import logging
 from typing import List
+from dotenv import load_dotenv
 
 import google.generativeai as genai
 
+load_dotenv()
 logger = logging.getLogger(__name__)
 
 class HpoService:
