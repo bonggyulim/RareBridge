@@ -10,6 +10,7 @@ from app.api.response_utils import error_response
 from app.api import symptom_controller
 from app.api import hpo_controller
 from app.api import disease_controller
+from app.api import diagnosis_controller
 
 # 환경변수 로드
 dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
@@ -67,6 +68,11 @@ app.include_router(
 app.include_router(
     disease_controller.router,
     prefix=f"{API_V1_PREFIX}/diseases",
+)
+
+app.include_router(
+    diagnosis_controller.router,
+    prefix=f"{API_V1_PREFIX}",
 )
 
 @app.get("/")
