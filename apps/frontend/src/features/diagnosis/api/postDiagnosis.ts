@@ -1,7 +1,7 @@
 import { DiagnosisResponse } from '../model/types';
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:9000';
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://rarebridge-backend.onrender.com/';
 
 export async function postDiagnosis(text: string): Promise<DiagnosisResponse> {
   const response = await fetch(`${API_BASE_URL}/api/v1/diagnosis`, {
