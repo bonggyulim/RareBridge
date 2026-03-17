@@ -12,6 +12,9 @@ class DiseaseItem(BaseModel):
     matched_hpo_count: int
     input_hpo_count: int
     match_ratio: float
+    match_percent: float
+    weighted_score: float
+    weighted_percent: float
 
 class DiseaseSearchResponse(BaseModel):
     success: bool
