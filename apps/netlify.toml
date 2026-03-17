@@ -1,2 +1,3 @@
 [build]
-  command = "cd apps/frontend && npm run build"
+  base = "apps/frontend"
+  command = "npm run build"
