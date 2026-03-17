@@ -12,6 +12,10 @@ class DiseaseItem(BaseModel):
     matched_hpo_count: int
     input_hpo_count: int
     match_ratio: float
+    match_percent: float
+    weighted_score: float
+    weighted_percent: float
+    matched_hpo_codes: List[str] = Field(default_factory=list)
 
 class DiseaseSearchResponse(BaseModel):
     success: bool
