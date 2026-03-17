@@ -1,10 +1,6 @@
 from fastapi import APIRouter
-# from app.schemas.disease_schema import DiseaseSearchRequest, DiseaseSearchResponse
-# from app.services.disease_service import DiseaseService
-
-from schemas.disease_schema import DiseaseSearchRequest, DiseaseSearchResponse
-from services.disease_service import DiseaseService
-
+from app.schemas.disease_schema import DiseaseSearchRequest, DiseaseSearchResponse
+from app.services.disease_service import DiseaseService
 
 router = APIRouter(tags=["Disease"])
 

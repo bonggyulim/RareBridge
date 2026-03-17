@@ -15,6 +15,7 @@ class DiseaseItem(BaseModel):
     match_percent: float
     weighted_score: float
     weighted_percent: float
+    matched_hpo_codes: List[str] = Field(default_factory=list)
 
 class DiseaseSearchResponse(BaseModel):
     success: bool

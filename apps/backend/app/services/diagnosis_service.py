@@ -1,9 +1,9 @@
-# from app.services.hpo_service import HpoService
-# from app.services.disease_service import DiseaseService
+import logging
 
-from services.hpo_service import HpoService
-from services.disease_service import DiseaseService
-from services.symptom_service import process_and_validate_symptom  # (추가)
+from app.services.hpo_service import HpoService
+from app.services.disease_service import DiseaseService
+
+logger = logging.getLogger(__name__)
 
 
 class DiagnosisService:
@@ -12,20 +12,37 @@ class DiagnosisService:
         self.disease_service = DiseaseService()
 
     async def diagnose(self, text: str, top_k: int = 5):
-        # 1. 증상 검증 및 전처리 (추가)
-        validated_text = process_and_validate_symptom(text)  # (추가)
+        if not isinstance(text, str) or not text.strip():
+            raise ValueError("text must not be empty.")
 
-        # 2. HPO 코드 추출 (Gemini API)
-        hpo_codes = await self.hpo_service.extract_hpo_codes(validated_text)
+        if not isinstance(top_k, int) or top_k <= 0:
+            raise ValueError("top_k must be a positive integer.")
 
-        # 3. 질병 검색 (DB)
-        diseases = self.disease_service.search_diseases(
-            hpo_codes=hpo_codes,
-            top_k=top_k
-        )
+        try:
+            hpo_codes = await self.hpo_service.extract_hpo_codes(text)
 
-        return {
-            "text": validated_text,
-            "hpo_codes": hpo_codes,
-            "diseases": diseases
-        }
+            if not hpo_codes:
+                return {
+                    "text": text,
+                    "hpo_codes": [],
+                    "diseases": []
+                }
+
+            diseases = self.disease_service.search_diseases(
+                hpo_codes=hpo_codes,
+                top_k=top_k
+            )
+
+            return {
+                "text": text,
+                "hpo_codes": hpo_codes,
+                "diseases": diseases
+            }
+
+        except ValueError:
+            raise
+        except RuntimeError:
+            raise
+        except Exception as e:
+            logger.exception("Diagnosis pipeline failed.")
+            raise RuntimeError("Diagnosis failed.") from e
