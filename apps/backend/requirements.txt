@@ -10,4 +10,4 @@ lxml
 httpx
 python-multipart
 tqdm
-google.genai
+google-generativeai
