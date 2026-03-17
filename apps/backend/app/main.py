@@ -31,8 +31,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        # 배포 프론트 주소가 있으면 여기에 추가
-        # "https://your-frontend-domain.com",
+        "https://rarebridge.netlify.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
