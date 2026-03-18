@@ -1,6 +1,5 @@
 import re
 
-
 def process_and_validate_symptom(text: str) -> str:
     cleaned_text = " ".join(text.split())
 
