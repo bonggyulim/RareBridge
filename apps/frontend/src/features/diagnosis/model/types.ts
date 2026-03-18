@@ -17,7 +17,7 @@ export interface DiagnosisResult {
   diseases: DiagnosisDiseaseItem[];
 }
 
-export interface DiagnosisResponse {
+export interface DpoResponse {
   success: boolean;
   data: DiagnosisResult;
 }
