@@ -1,25 +1,68 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Search, RotateCcw, Info, Sparkles } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Search, RotateCcw, Info, Sparkles, ImagePlus, X } from 'lucide-react';
 
 interface Props {
-  onSearch: (text: string) => void;
+  onSearch: (text: string, imageFile: File | null) => void;
   isLoading: boolean;
 }
 
 export default function SymptomInputForm({ onSearch, isLoading }: Props) {
   const [text, setText] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!imageFile) {
+      setPreviewUrl(null);
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(imageFile);
+    setPreviewUrl(objectUrl);
+
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [imageFile]);
 
   const handleSubmit = () => {
     const trimmed = text.trim();
-    if (!trimmed || isLoading) return;
-    onSearch(trimmed);
+    if ((!trimmed && !imageFile) || isLoading) return;
+    onSearch(trimmed, imageFile);
   };
 
   const handleReset = () => {
     if (isLoading) return;
     setText('');
+    setImageFile(null);
+    setPreviewUrl(null);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = e.target.files?.[0] || null;
+
+    if (!selected) {
+      setImageFile(null);
+      return;
+    }
+
+    if (!selected.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드할 수 있습니다.');
+      return;
+    }
+
+    if (selected.size > 5 * 1024 * 1024) {
+      alert('이미지는 5MB 이하만 업로드할 수 있습니다.');
+      return;
+    }
+
+    setImageFile(selected);
+  };
+
+  const removeImage = () => {
+    if (isLoading) return;
+    setImageFile(null);
+    setPreviewUrl(null);
   };
 
   return (
@@ -54,12 +97,73 @@ export default function SymptomInputForm({ onSearch, isLoading }: Props) {
             {text.length} characters
           </div>
         </div>
+
+        <div className="flex flex-col gap-4 rounded-[28px] border border-slate-100 bg-slate-50/50 p-6">
+          <div className="flex items-center gap-2 text-slate-900">
+            <ImagePlus size={18} className="text-[#5200cc]" />
+            <h4 className="text-sm font-bold uppercase tracking-wide">
+              Symptom Image
+            </h4>
+          </div>
+
+          <label className="flex cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-[#5200cc]/20 bg-white px-6 py-8 text-center transition hover:border-[#5200cc]/40 hover:bg-[#5200cc]/5">
+            <ImagePlus size={28} className="text-[#5200cc]" />
+            <div>
+              <p className="text-sm font-bold text-slate-900">
+                증상 관련 이미지를 업로드하세요
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                JPG, PNG, WEBP / 최대 5MB
+              </p>
+            </div>
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              disabled={isLoading}
+              onChange={handleFileChange}
+            />
+          </label>
+
+          {previewUrl && (
+            <div className="relative w-full overflow-hidden rounded-3xl border border-slate-200 bg-white p-3">
+              <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-slate-100">
+                <img
+                  src={previewUrl}
+                  alt="업로드 이미지 미리보기"
+                  className="h-full w-full object-contain"
+                />
+              </div>
+
+              <div className="mt-3 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-bold text-slate-900">
+                    {imageFile?.name}
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    {imageFile ? Math.round(imageFile.size / 1024) : 0} KB
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  disabled={isLoading}
+                  className="flex items-center gap-2 rounded-xl bg-slate-100 px-4 py-2 text-sm font-bold text-slate-600 transition hover:bg-slate-200"
+                >
+                  <X size={16} />
+                  제거
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex flex-col gap-4 sm:flex-row">
         <button
           onClick={handleSubmit}
-          disabled={isLoading || !text.trim()}
+          disabled={isLoading || (!text.trim() && !imageFile)}
           className="flex h-16 flex-[2] items-center justify-center gap-3 rounded-2xl bg-[#5200cc] font-bold text-white shadow-xl shadow-[#5200cc]/20 transition-all hover:scale-[1.01] hover:bg-[#4300aa] hover:shadow-2xl hover:shadow-[#5200cc]/30 active:scale-95 disabled:opacity-30 disabled:hover:scale-100"
         >
           {isLoading ? (
@@ -94,8 +198,8 @@ export default function SymptomInputForm({ onSearch, isLoading }: Props) {
           <h4 className="text-sm font-bold text-slate-900">작성 가이드</h4>
           <p className="text-xs font-medium leading-relaxed text-slate-500">
             증상의 발생 시점, 부위, 강도 및 빈도를 포함해 주시면 AI가 더욱 정밀하게
-            분석할 수 있습니다. 입력된 내용은 표준 의학 용어인 HPO(Human
-            Phenotype Ontology)로 자동 변환됩니다.
+            분석할 수 있습니다. 이미지가 있다면 함께 업로드해 주세요.
+            입력된 내용은 표준 의학 용어인 HPO(Human Phenotype Ontology)로 자동 변환됩니다.
           </p>
         </div>
       </div>

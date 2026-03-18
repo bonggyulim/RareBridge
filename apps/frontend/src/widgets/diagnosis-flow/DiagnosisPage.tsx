@@ -6,14 +6,13 @@ import {
   Activity,
   ArrowRight,
   ChevronRight,
-  Home,
   RefreshCw,
   ShieldCheck,
   Zap,
 } from 'lucide-react';
 
-import { postDiagnosis } from '@/features/diagnosis/api/postDiagnosis';
-import { DiagnosisResult } from '@/features/diagnosis/model/types';
+import { postDpo } from '@/features/diagnosis/api/postDpo';
+import type { DiagnosisResult } from '@/features/diagnosis/model/types';
 import SymptomInputForm from '@/features/diagnosis/ui/SymptomInputForm';
 import DiseaseResultList from '@/features/diagnosis/ui/DiseaseResultList';
 
@@ -24,11 +23,11 @@ export default function DiagnosisPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [resultData, setResultData] = useState<DiagnosisResult | null>(null);
 
-  const handleSearch = async (text: string) => {
+  const handleSearch = async (text: string, imageFile: File | null) => {
     setIsLoading(true);
 
     try {
-      const response = await postDiagnosis(text);
+      const response = await postDpo(text, imageFile);
 
       if (response.success) {
         setResultData(response.data);
@@ -61,8 +60,6 @@ export default function DiagnosisPage() {
               RareBridge
             </span>
           </div>
-
-
         </div>
       </header>
 
@@ -142,6 +139,7 @@ export default function DiagnosisPage() {
                     src="/hero.png"
                     alt="Medical AI Illustration"
                     fill
+                    unoptimized
                     className="object-cover transition-transform duration-1000 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
