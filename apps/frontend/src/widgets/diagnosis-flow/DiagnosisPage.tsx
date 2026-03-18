@@ -9,6 +9,8 @@ import {
   RefreshCw,
   ShieldCheck,
   Zap,
+  BarChart3,
+  Info
 } from 'lucide-react';
 
 import { postDpo } from '@/features/diagnosis/api/postDpo';
@@ -60,6 +62,8 @@ export default function DiagnosisPage() {
               RareBridge
             </span>
           </div>
+
+
         </div>
       </header>
 
@@ -226,12 +230,11 @@ export default function DiagnosisPage() {
 
               <div className="flex flex-col gap-3 rounded-3xl border border-slate-100 bg-white/50 p-6">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 text-green-600">
-                  <ShieldCheck size={20} />
+                  <BarChart3 size={20} />
                 </div>
-                <h4 className="font-bold text-slate-900">Privacy First</h4>
+                <h4 className="font-bold text-slate-900">Weighted Scoring</h4>
                 <p className="text-xs leading-relaxed text-slate-500">
-                  입력된 모든 개인 민감 데이터는 암호화 처리되어 안전하게
-                  보호됩니다.
+                  질환별 증상 빈도를 반영한 가중치 기반 일치율을 바탕으로 질환 후보를 제공합니다.
                 </p>
               </div>
             </div>
@@ -275,82 +278,48 @@ export default function DiagnosisPage() {
               <DiseaseResultList diseases={resultData?.diseases || []} />
             </div>
 
-            <div className="group relative mt-16 overflow-hidden rounded-[40px] bg-slate-900 p-10 text-white">
-              <div className="pointer-events-none absolute right-0 top-0 h-64 w-64 rounded-full bg-[#5200cc]/20 blur-[80px]" />
-              <div className="relative z-10 flex flex-col items-center justify-between gap-8 md:flex-row">
-                <div className="max-w-xl">
-                  <h4 className="mb-3 text-2xl font-bold">
-                    의료적 면책 조항 (Medical Disclaimer)
-                  </h4>
-                  <p className="text-sm leading-relaxed text-slate-400">
-                    본 분석 결과는 인공지능 보조 도구에 의한 참고용이며, 최종적인
-                    의학적 판단이 아닙니다. 정확한 진단과 치료를 위해서는 반드시
-                    전문 의료진의 상담을 통해 정밀 검사를 진행하시기 바랍니다.
-                  </p>
+            <div className="mt-8 rounded-2xl border border-[#5200cc]/10 bg-[#5200cc]/5 p-6">
+              <div className="flex items-start gap-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-[#5200cc] shadow-sm">
+                  <Info size={20} />
                 </div>
 
-                <button className="whitespace-nowrap rounded-2xl bg-[#5200cc] px-8 py-4 font-bold shadow-2xl shadow-[#5200cc]/40 transition-colors hover:bg-[#4300aa]">
-                  전문의 상담 연결
-                </button>
+                <div className="flex flex-col gap-1">
+                  <h4 className="text-sm font-bold text-slate-900">
+                    의료적 면책 조항 (Medical Disclaimer)
+                  </h4>
+                  <p className="text-xs font-medium leading-relaxed text-slate-500">
+                    본 분석 결과는 인공지능 보조 도구에 의한 참고용이며, 최종적인 의학적
+                    판단이 아닙니다. 정확한 진단과 치료를 위해서는 반드시 전문 의료진의
+                    상담을 통해 정밀 검사를 진행하시기 바랍니다.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        )}
+        )} 
+
       </main>
-
-      <footer className="w-full border-t border-slate-200 bg-white/50 py-16 selection:bg-none">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-6 md:grid-cols-4">
-          <div className="md:col-span-2">
-            <div className="mb-6 flex items-center gap-3 text-[#5200cc]">
-              <Zap size={24} fill="currentColor" />
-              <span className="text-xl font-black uppercase tracking-tighter text-slate-900">
-                RareBridge
-              </span>
-            </div>
-
-            <p className="max-w-sm text-sm leading-relaxed text-slate-400">
-              희귀질환 정밀 의료 인프라를 구축하고 환우들의 건강한 내일을
-              연결하는 차세대 플랫폼입니다.
-            </p>
+      
+      <footer className="w-full border-t border-slate-200 bg-white/50 py-16">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="mb-6 flex items-center justify-center gap-3 text-[#5200cc]">
+            <Zap size={24} fill="currentColor" />
+            <span className="text-xl font-black uppercase tracking-tighter text-slate-900">
+              RareBridge
+            </span>
           </div>
 
-          <div>
-            <h5 className="mb-6 font-sans font-bold text-slate-900">
-              Platforms
-            </h5>
-            <ul className="flex flex-col gap-4 text-sm font-medium text-slate-500">
-              <li className="cursor-pointer transition-colors hover:text-[#5200cc]">
-                Symptom Engine
-              </li>
-              <li className="cursor-pointer transition-colors hover:text-[#5200cc]">
-                Disease Database
-              </li>
-              <li className="cursor-pointer transition-colors hover:text-[#5200cc]">
-                Clinical Portal
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h5 className="mb-6 font-sans font-bold text-slate-900">Company</h5>
-            <ul className="flex flex-col gap-4 text-sm font-medium text-slate-500">
-              <li className="cursor-pointer transition-colors hover:text-[#5200cc]">
-                Privacy Policy
-              </li>
-              <li className="cursor-pointer transition-colors hover:text-[#5200cc]">
-                Terms of Service
-              </li>
-              <li className="cursor-pointer transition-colors hover:text-[#5200cc]">
-                Contact Support
-              </li>
-            </ul>
-          </div>
+          <p className="mx-auto max-w-2xl text-center text-sm leading-relaxed text-slate-400">
+            희귀질환 정밀 의료 인프라를 구축하고 환우들의 건강한 내일을 연결하는 차세대 플랫폼입니다.
+          </p>
         </div>
 
-        <div className="mx-auto mt-16 max-w-7xl border-t border-slate-100 px-6 pt-8 text-center text-[10px] font-bold uppercase tracking-widest text-slate-300">
+        <div className="mx-auto mt-12 max-w-7xl border-t border-slate-100 px-6 pt-6 text-center text-[10px] font-bold uppercase tracking-widest text-slate-300">
           © 2026 RareBridge Inc. All rights reserved.
         </div>
       </footer>
+
     </div>
   );
 }
