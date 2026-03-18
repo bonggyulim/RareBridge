@@ -7,16 +7,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.api.response_utils import error_response
-from app.api import symptom_controller
 from app.api import hpo_controller
 from app.api import disease_controller
 from app.api import diagnosis_controller
 
-# 환경변수 로드
 dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
 load_dotenv(dotenv_path)
 
-# 로깅 설정
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -26,7 +23,6 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# CORS 설정
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -38,7 +34,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 전역 예외 처리
+
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     logger.error(f"Global error: {str(exc)}", exc_info=True)
@@ -50,14 +46,8 @@ async def global_exception_handler(request: Request, exc: Exception):
         ),
     )
 
-# 공통 prefix
-API_V1_PREFIX = "/api/v1"
 
-# 라우터 등록
-app.include_router(
-    symptom_controller.router,
-    prefix=f"{API_V1_PREFIX}/symptoms",
-)
+API_V1_PREFIX = "/api/v1"
 
 app.include_router(
     hpo_controller.router,
@@ -74,12 +64,14 @@ app.include_router(
     prefix=f"{API_V1_PREFIX}",
 )
 
+
 @app.get("/")
 async def root():
     return {
         "message": "RareBridge API is running",
         "version": "1.0.0"
     }
+
 
 if __name__ == "__main__":
     import uvicorn

@@ -6,7 +6,6 @@ import {
   Activity,
   ArrowRight,
   ChevronRight,
-  Home,
   RefreshCw,
   ShieldCheck,
   Zap,
@@ -14,8 +13,8 @@ import {
   Info
 } from 'lucide-react';
 
-import { postDiagnosis } from '@/features/diagnosis/api/postDiagnosis';
-import { DiagnosisResult } from '@/features/diagnosis/model/types';
+import { postDpo } from '@/features/diagnosis/api/postDpo';
+import type { DiagnosisResult } from '@/features/diagnosis/model/types';
 import SymptomInputForm from '@/features/diagnosis/ui/SymptomInputForm';
 import DiseaseResultList from '@/features/diagnosis/ui/DiseaseResultList';
 
@@ -26,11 +25,11 @@ export default function DiagnosisPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [resultData, setResultData] = useState<DiagnosisResult | null>(null);
 
-  const handleSearch = async (text: string) => {
+  const handleSearch = async (text: string, imageFile: File | null) => {
     setIsLoading(true);
 
     try {
-      const response = await postDiagnosis(text);
+      const response = await postDpo(text, imageFile);
 
       if (response.success) {
         setResultData(response.data);
@@ -63,6 +62,7 @@ export default function DiagnosisPage() {
               RareBridge
             </span>
           </div>
+
 
         </div>
       </header>
