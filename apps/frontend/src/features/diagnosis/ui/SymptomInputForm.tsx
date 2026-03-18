@@ -2,6 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { Search, RotateCcw, Info, Sparkles, ImagePlus, X } from 'lucide-react';
+import { toast } from 'sonner';
+import {
+  validateSymptomText,
+  getSymptomValidationMessage,
+} from '@/shared/lib/validateSymptom';
 
 interface Props {
   onSearch: (text: string, imageFile: File | null) => void;
@@ -26,9 +31,15 @@ export default function SymptomInputForm({ onSearch, isLoading }: Props) {
   }, [imageFile]);
 
   const handleSubmit = () => {
-    const trimmed = text.trim();
-    if ((!trimmed && !imageFile) || isLoading) return;
-    onSearch(trimmed, imageFile);
+    if (isLoading) return;
+
+    try {
+      const validatedText = validateSymptomText(text);
+      onSearch(validatedText, imageFile);
+    } catch (error) {
+      const code = error instanceof Error ? error.message : 'UNKNOWN';
+      toast.error(getSymptomValidationMessage(code));
+    }
   };
 
   const handleReset = () => {
@@ -47,12 +58,12 @@ export default function SymptomInputForm({ onSearch, isLoading }: Props) {
     }
 
     if (!selected.type.startsWith('image/')) {
-      alert('이미지 파일만 업로드할 수 있습니다.');
+      toast.error('이미지 파일만 업로드할 수 있습니다.');
       return;
     }
 
     if (selected.size > 5 * 1024 * 1024) {
-      alert('이미지는 5MB 이하만 업로드할 수 있습니다.');
+      toast.error('이미지는 5MB 이하만 업로드할 수 있습니다.');
       return;
     }
 
@@ -64,6 +75,8 @@ export default function SymptomInputForm({ onSearch, isLoading }: Props) {
     setImageFile(null);
     setPreviewUrl(null);
   };
+
+  const isSubmitDisabled = isLoading || !text.trim();
 
   return (
     <div className="flex w-full flex-col gap-8">
@@ -162,9 +175,10 @@ export default function SymptomInputForm({ onSearch, isLoading }: Props) {
 
       <div className="flex flex-col gap-4 sm:flex-row">
         <button
+          type="button"
           onClick={handleSubmit}
-          disabled={isLoading || (!text.trim() && !imageFile)}
-          className="flex h-16 flex-[2] items-center justify-center gap-3 rounded-2xl bg-[#5200cc] font-bold text-white shadow-xl shadow-[#5200cc]/20 transition-all hover:scale-[1.01] hover:bg-[#4300aa] hover:shadow-2xl hover:shadow-[#5200cc]/30 active:scale-95 disabled:opacity-30 disabled:hover:scale-100"
+          disabled={isSubmitDisabled}
+          className="flex h-16 flex-[2] items-center justify-center gap-3 rounded-2xl bg-[#5200cc] font-bold text-white shadow-xl shadow-[#5200cc]/20 transition-all hover:scale-[1.01] hover:bg-[#4300aa] hover:shadow-2xl hover:shadow-[#5200cc]/30 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:scale-100"
         >
           {isLoading ? (
             <>
@@ -180,6 +194,7 @@ export default function SymptomInputForm({ onSearch, isLoading }: Props) {
         </button>
 
         <button
+          type="button"
           onClick={handleReset}
           disabled={isLoading}
           className="flex h-16 flex-1 items-center justify-center gap-2 rounded-2xl bg-slate-100 font-bold text-slate-500 transition-all hover:bg-slate-200 hover:text-slate-700 active:scale-95 disabled:opacity-50"
